@@ -1,12 +1,11 @@
 <template lang="html">
   <div class="container" ref="container">
-    <div class="list" drag v-for="n in 3">
-      <div class="list-header" drag-el>
-        功能
-      </div>
+    <div class="list" drag v-for="list in boardData">
+      <div class="list-header" drag-el>{{list.header}}</div>
       <div class="list-card" ref="listcard">
-        <Card></Card>
-        <Card></Card>
+        <Card v-for="card in list.items">
+          {{card.text}}
+        </Card>
       </div>
       <a class="list-bottom">
         Add a card...
@@ -18,13 +17,22 @@
 <script>
 import dragable from 'trello-drag'
 import Card from './boardCard'
+var listcard = null
+var container = null
 export default {
   data () {
     return {}
   },
+  computed: {
+    boardData () {
+      return this.$store.state.board
+    }
+  },
   mounted () {
-    dragable(this.$refs.listcard)
-    dragable(this.$refs.container)
+    this.$nextTick(() => {
+      listcard = dragable(this.$refs.listcard)
+      container = dragable(this.$refs.container)
+    })
   },
   methods: {},
   components: {

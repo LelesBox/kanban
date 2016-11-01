@@ -3,16 +3,12 @@
 require('normalize.css')
 import Vue from 'vue'
 import app from './app'
-import VueRouter from 'vue-router'
-import routes from './router/'
-Vue.use(VueRouter)
+import router from './router/'
+import store from './store/'
 
-let router = new VueRouter({
-  mode: 'history',
-  routes
-})
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   ...app
 }).$mount('#app')

@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="container card" drag>
-    By My Side
+    <slot></slot>
   </div>
 </template>
 
