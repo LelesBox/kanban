@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "normalize.css": "^5.0.0",
+    "trello-drag": "git+https://github.com/LelesBox/trello-drag.git",
     "vue": "^2.0.1"
   },
   "devDependencies": {

@@ -8,6 +8,11 @@ html, body {
   background-color: #0079bf;
   height: 100%;
   width: 100%;
-  box-sizing: border-box;
+  * {
+    box-sizing: border-box;
+  }
+}
+#app {
+  height: 100%;
 }
 </style>
