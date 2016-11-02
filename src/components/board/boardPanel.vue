@@ -7,24 +7,30 @@
           {{card.text}}
         </Card>
       </div>
-      <a class="list-bottom">
-        Add a card...
-      </a>
+      <add-card></add-card>
     </div>
   </div>
 </template>
 
 <script>
-import dragable from 'trello-drag'
+import dragable from './drag'
 import Card from './boardCard'
+import addCard from './addcard'
 var listcard = null
 var container = null
+
 export default {
   data () {
     return {}
   },
   computed: {
     boardData () {
+      if (listcard && container) {
+        this.$nextTick(() => {
+          listcard.update()
+          container.update()
+        })
+      }
       return this.$store.state.board
     }
   },
@@ -32,11 +38,17 @@ export default {
     this.$nextTick(() => {
       listcard = dragable(this.$refs.listcard)
       container = dragable(this.$refs.container)
+      this.getBoardData()
     })
   },
-  methods: {},
+  methods: {
+    getBoardData: function (id) {
+      this.$store.dispatch('FETCH_BOARD_DATA')
+    }
+  },
   components: {
-    Card
+    Card,
+    addCard
   }
 }
 </script>
@@ -76,25 +88,15 @@ export default {
   .list-card {
     padding: 10px;
   }
-  .list-bottom {
-    display: block;
-    height: 34px;
-    padding: 10px;
-    // font-size: 14px;
-    color: #8d8d8d;
-    cursor: pointer;
-    border-radius:0 0 4px 4px;
-    &:hover {
-      text-decoration: underline;
-      color: #000;
-      background-color: #c4c9cc;
-    }
-  }
 }
 </style>
 <style lang="scss">
 .card {
-  margin: 15px 0;
+  margin: 10px 0;
+  border-bottom: 2px solid #D6DADC;
+  &:hover {
+    background-color: #EDEFF0;
+  }
   &:first-child {
     margin-top: 0px;
   }
