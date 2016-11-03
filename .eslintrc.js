@@ -20,6 +20,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   },
   globals: {
-    cssModules: true
+    cssModules: true,
+    Promoise: true
   }
 }
