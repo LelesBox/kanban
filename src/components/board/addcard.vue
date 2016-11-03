@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="container">
-    <a class="list-bottom" v-show="!showTextarea" @click="openCard">
+    <a class="list-bottom" v-show="!show_textarea" @click="openCard">
       Add a card...
     </a>
-    <div class="input" v-show="showTextarea">
+    <div class="input" v-show="show_textarea">
       <textarea name="name" class="textarea" ref="textarea" :style="{ height: textHeight + 'px'}" @keyup.enter="addCard" v-model="text">
       </textarea>
       <textarea name="name" class="textarea hide" ref="hideTextarea">{{text}}</textarea>
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import eventHub, { OPEN_TEXTAREA } from './eventHub'
+
 export default {
   props: {
     listId: {
@@ -29,13 +31,17 @@ export default {
     return {
       text: '',
       textHeight: 70,
-      showTextarea: false,
-      boardId: ''
+      boardId: '',
+      show_textarea: false
     }
   },
-  computed: {},
   mounted () {
     this.boardId = this.$route.params.board_id
+    eventHub.$on(OPEN_TEXTAREA, id => {
+      if (id !== this.listId) {
+        this.show_textarea = false
+      }
+    })
   },
   watch: {
     text (newval, oldval) {
@@ -50,10 +56,14 @@ export default {
   },
   methods: {
     openCard () {
-      this.showTextarea = true
+      this.show_textarea = true
+      eventHub.$emit(OPEN_TEXTAREA, this.listId)
+      this.$nextTick(() => {
+        this.$refs.textarea.focus()
+      })
     },
     closeCard () {
-      this.showTextarea = false
+      this.show_textarea = false
     },
     addCard () {
       if (this.text !== '') {
@@ -65,7 +75,9 @@ export default {
       }
     }
   },
-  components: {}
+  destroyed () {
+    eventHub.$off(OPEN_TEXTAREA)
+  }
 }
 </script>
 

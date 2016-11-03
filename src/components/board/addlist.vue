@@ -4,7 +4,7 @@
       Add a List..
     </div>
     <div class="add-input" v-show="showInput">
-      <input class="input" placeholder="Add a List" ref="input" v-model="list_name"></input>
+      <input class="input" placeholder="Add a List" ref="input" v-model="list_name" @keyup.enter="addList"></input>
       <div>
         <div class="add-btn" @click="addList">
           Add
@@ -20,18 +20,19 @@ export default {
   data () {
     return {
       list_name: '',
-      showInput: false,
-      board_id: ''
+      board_id: '',
+      showInput: false
     }
   },
-  computed: {},
   mounted () {
     this.board_id = this.$route.params.board_id
   },
   methods: {
     addList () {
-      this.$store.dispatch('ADD_NEWLIST', { board_id: this.board_id, list_name: this.list_name })
-      this.list_name = ''
+      if (this.list_name !== '') {
+        this.$store.dispatch('ADD_NEWLIST', { board_id: this.board_id, list_name: this.list_name })
+        this.list_name = ''
+      }
     },
     openInput () {
       this.showInput = true
@@ -39,8 +40,7 @@ export default {
         this.$refs.input.focus()
       })
     }
-  },
-  components: {}
+  }
 }
 </script>
 

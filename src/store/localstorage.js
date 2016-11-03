@@ -23,19 +23,21 @@ exports.getBoardData = function getBoardData (id) {
   return Promise.resolve(deepClone(board))
 }
 
-// 添加卡片
+// 添加看板
 exports.addBoard = function addBoard (name) {
   var newboard = {
     board_id: createId(),
     board_name: name
   }
   stateTree.push(newboard)
-  return Promise.resolve(newboard)
+  saveBoardData()
+  return Promise.resolve(deepClone(newboard))
 }
 // 删除看板
 exports.removeBoard = function removeBoard (bid) {
   try {
     stateTree = stateTree.filter((item) => item.board_id !== bid)
+    saveBoardData()
     return Promise.resolve()
   } catch (e) {
     return Promise.reject()
@@ -45,15 +47,17 @@ exports.removeBoard = function removeBoard (bid) {
 // 添加list
 exports.addList = function addList (id, name) {
   try {
-    var board = stateTree.filter((item) => {
-      return item.board_id === id
-    })[0]
-    board.list.push({
+    var list = {
       list_id: createId(),
       list_name: name,
       cards: []
-    })
-    return Promise.resolve()
+    }
+    var board = stateTree.filter((item) => {
+      return item.board_id === id
+    })[0]
+    board.list.push(list)
+    saveBoardData()
+    return Promise.resolve(deepClone(list))
   } catch (e) {
     return Promise.reject(e)
   }
@@ -64,6 +68,7 @@ exports.removeList = function removeList (bid, lid) {
     var board = stateTree.filter((item) => item.board_id === bid)[0]
     var list = board.list.filter((item) => item.list_id !== lid)
     board.list = list
+    saveBoardData()
     return Promise.resolve()
   } catch (e) {
     return Promise.reject()
@@ -73,15 +78,16 @@ exports.removeList = function removeList (bid, lid) {
 // 添加card
 exports.addCard = function addCard (bid, lid, text) {
   try {
-    // var cards = stateTree.filter((item) => item.board_id === bid)[0].list.filter((item) => item.list_id === lid)[0].cards
+    var card = {
+      card_id: createId(),
+      text: text
+    }
     var board = stateTree.filter((item) => item.board_id === bid)[0]
     var list = board.list.filter((item) => item.list_id === lid)[0]
     var cards = list.cards
-    cards.push({
-      card_id: createId(),
-      text: text
-    })
-    return Promise.resolve()
+    cards.push(card)
+    saveBoardData()
+    return Promise.resolve(deepClone(card))
   } catch (e) {
     return Promise.reject(e)
   }
@@ -93,14 +99,15 @@ exports.removeCard = function removeCard (bid, lid, cid) {
     var list = board.list.filter((item) => item.list_id === lid)[0]
     var cards = list.cards.filter((item) => item.card_id !== cid)
     list.cards = cards
+    saveBoardData()
     return Promise.resolve()
   } catch (e) {
     return Promise.reject()
   }
 }
 
-exports.saveBoardData = function saveBoardData (state) {
-  localStorage.setItem('state', JSON.stringify(state))
+function saveBoardData () {
+  localStorage.setItem('state', JSON.stringify(stateTree))
 }
 
 exports.initStore = stateTree
@@ -135,5 +142,7 @@ function deepClone (obj) {
 }
 
 function createId () {
-  return new Date().getTime()
+  return new Date().getTime() + ''
 }
+
+window.lc = function () { localStorage.clear() }
