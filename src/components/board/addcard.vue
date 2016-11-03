@@ -4,7 +4,7 @@
       Add a card...
     </a>
     <div class="input" v-show="showTextarea">
-      <textarea name="name" class="textarea" ref="textarea" @input="oninput" :style="{ height: textHeight + 'px'}" v-model="text">
+      <textarea name="name" class="textarea" ref="textarea" :style="{ height: textHeight + 'px'}" @keyup.enter="addCard" v-model="text">
       </textarea>
       <textarea name="name" class="textarea hide" ref="hideTextarea">{{text}}</textarea>
       <div class="add">
@@ -22,18 +22,32 @@
 export default {
   props: {
     listId: {
-      type: Number
+      type: String
     }
   },
   data () {
     return {
       text: '',
       textHeight: 70,
-      showTextarea: false
+      showTextarea: false,
+      boardId: ''
     }
   },
   computed: {},
-  mounted () {},
+  mounted () {
+    this.boardId = this.$route.params.board_id
+  },
+  watch: {
+    text (newval, oldval) {
+      this.$nextTick(() => {
+        if (this.$refs.hideTextarea.scrollHeight > 70) {
+          this.textHeight = this.$refs.hideTextarea.scrollHeight + 10
+        } else {
+          this.textHeight = 70
+        }
+      })
+    }
+  },
   methods: {
     openCard () {
       this.showTextarea = true
@@ -42,16 +56,13 @@ export default {
       this.showTextarea = false
     },
     addCard () {
-      //
-    },
-    oninput () {
-      this.$nextTick(() => {
-        if (this.$refs.hideTextarea.scrollHeight > 70) {
-          this.textHeight = this.$refs.hideTextarea.scrollHeight + 10
-        } else {
-          this.textHeight = 70
-        }
-      })
+      if (this.text !== '') {
+        this.$store.dispatch('ADD_CARD', { text: this.text, board_id: this.boardId, list_id: this.listId })
+        this.text = ''
+        this.$nextTick(() => {
+          this.$refs.textarea.focus()
+        })
+      }
     }
   },
   components: {}

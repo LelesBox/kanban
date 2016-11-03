@@ -13,7 +13,7 @@ export default new VueRouter({
       component: home
     },
     {
-      path: '/b',
+      path: '/:board_id',
       name: 'board',
       component: board
     }

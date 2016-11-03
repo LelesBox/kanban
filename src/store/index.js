@@ -1,24 +1,43 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getBoardData } from './api'
+import api from './api'
 Vue.use(Vuex)
 
+/* ****
+var state = {
+  boards: [{
+    board_id: '1',
+    board_name: 'asd'
+  },{
+    board_id: '2',
+    board_name: 'asddd'
+  }],
+  current_board: {
+    board_id: '1',
+    list: []
+  }
+}
+*/
 const store = new Vuex.Store({
-  state: {
-    board: [{
-      header: '未命名'
-    }]
-  },
+  state: api.getInitState(),
   actions: {
-    FETCH_BOARD_DATA: ({ commit }) => {
-      getBoardData(1).then((response) => {
-        commit('SET_BOARD_DATA', { board: response.body })
+    FETCH_BOARD_DATA: ({ commit }, { id }) => {
+      api.getBoardData(id).then((board) => {
+        commit('SET_BOARD_DATA', { board })
+      })
+    },
+    ADD_CARD: ({ commit }, { text, board_id, list_id }) => {
+      api.addCard(board_id, list_id, text).then(() => {
+        console.log(text, board_id, list_id)
       })
     }
   },
   mutations: {
     SET_BOARD_DATA: (state, { board }) => {
-      state.board = board
+      state.current_board = board
+    },
+    ADD_CARD_DATA: (state, { id, data }) => {
+      state.board
     }
   }
 })

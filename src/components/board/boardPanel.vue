@@ -1,19 +1,19 @@
 <template lang="html">
   <div class="container" ref="container">
-    <div class="list" drag v-for="list in boardData">
-      <div class="list-header" drag-el>{{list.header}}</div>
+    <div class="list" drag v-for="list in boardData.list">
+      <div class="list-header" drag-el>{{list.list_name}}</div>
       <div class="list-card" ref="listcard">
-        <Card v-for="card in list.items">
+        <Card v-for="card in list.cards">
           {{card.text}}
         </Card>
       </div>
-      <add-card></add-card>
+      <add-card :list-id="list.list_id"></add-card>
     </div>
   </div>
 </template>
 
 <script>
-import dragable from './drag'
+// import dragable from './drag'
 import Card from './boardCard'
 import addCard from './addcard'
 var listcard = null
@@ -27,23 +27,23 @@ export default {
     boardData () {
       if (listcard && container) {
         this.$nextTick(() => {
-          listcard.update()
-          container.update()
+          // listcard.update()
+          // container.update()
         })
       }
-      return this.$store.state.board
+      return this.$store.state.current_board
     }
   },
   mounted () {
     this.$nextTick(() => {
-      listcard = dragable(this.$refs.listcard)
-      container = dragable(this.$refs.container)
-      this.getBoardData()
+      // listcard = dragable(this.$refs.listcard)
+      // container = dragable(this.$refs.container)
+      this.getBoardData(this.$route.params.board_id)
     })
   },
   methods: {
     getBoardData: function (id) {
-      this.$store.dispatch('FETCH_BOARD_DATA')
+      this.$store.dispatch('FETCH_BOARD_DATA', { id })
     }
   },
   components: {

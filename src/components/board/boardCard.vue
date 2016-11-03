@@ -22,5 +22,8 @@ export default {
   background-color: #fff;
   border-radius: 4px;
   font-size: 14px;
+  word-break:break-all;
+  white-space:normal;
+  line-height: 16px;
 }
 </style>
