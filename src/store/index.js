@@ -30,6 +30,11 @@ const store = new Vuex.Store({
       api.addCard(board_id, list_id, text).then(() => {
         console.log(text, board_id, list_id)
       })
+    },
+    ADD_NEWLIST: ({ commit }, { list_name, board_id }) => {
+      api.addList(board_id, list_name).then(() => {
+        //
+      })
     }
   },
   mutations: {

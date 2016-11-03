@@ -32,7 +32,6 @@ exports.addCard = function addCard (bid, lid, text) {
 exports.removeCard = function removeCard (bid, lid, cid) {
   return ls.removeCard(bid, lid, cid)
 }
-
 exports.getInitState = function getInitState () {
   var boards = ls.initStore.map((item) => {
     return {
@@ -41,7 +40,7 @@ exports.getInitState = function getInitState () {
     }
   })
   return {
-    boards: boards,
-    current_board: {}
+    boards,
+    current_board: []
   }
 }

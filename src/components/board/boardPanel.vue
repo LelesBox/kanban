@@ -9,6 +9,7 @@
       </div>
       <add-card :list-id="list.list_id"></add-card>
     </div>
+    <add-list></add-list>
   </div>
 </template>
 
@@ -16,6 +17,7 @@
 // import dragable from './drag'
 import Card from './boardCard'
 import addCard from './addcard'
+import addList from './addlist'
 var listcard = null
 var container = null
 
@@ -25,10 +27,10 @@ export default {
   },
   computed: {
     boardData () {
-      if (listcard && container) {
+      if (listcard && container && this.$store.state.current_board.list.length > 0) {
         this.$nextTick(() => {
-          // listcard.update()
-          // container.update()
+          listcard.update()
+          container.update()
         })
       }
       return this.$store.state.current_board
@@ -48,7 +50,8 @@ export default {
   },
   components: {
     Card,
-    addCard
+    addCard,
+    addList
   }
 }
 </script>
@@ -82,8 +85,10 @@ export default {
   .list-header {
     font-size: 18px;
     font-weight: bold;
-    height: 34px;
+    min-height: 34px;
     padding: 10px;
+    white-space: normal;
+    word-break:break-all;
   }
   .list-card {
     padding: 10px;

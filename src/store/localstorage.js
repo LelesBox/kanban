@@ -14,11 +14,13 @@ if (stateTree) {
   }]
 }
 
+// 务必返回一个深拷贝，不然返回的board就会被当做引用去初始化vuex的store
+// 保持stateTree包括所有子节点没有被Observe
 exports.getBoardData = function getBoardData (id) {
   var board = stateTree.filter((item) => {
     return id === item.board_id
   })[0]
-  return Promise.resolve(board)
+  return Promise.resolve(deepClone(board))
 }
 
 // 添加卡片
@@ -102,6 +104,35 @@ exports.saveBoardData = function saveBoardData (state) {
 }
 
 exports.initStore = stateTree
+
+function deepCloneArray (arr) {
+  return arr.map((item) => {
+    if (toString.call(item) === '[object Array]') {
+      return deepCloneArray(item)
+    } else if (Object(item) === item) {
+      return deepClone(item)
+    } else {
+      return item
+    }
+  })
+}
+
+function deepClone (obj) {
+  var o = {}
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      var item = obj[key]
+      if (toString.call(item) === '[object Array]') {
+        o[key] = deepCloneArray(item)
+      } else if (Object(item) === item) {
+        o[key] = deepClone(item)
+      } else {
+        o[key] = item
+      }
+    }
+  }
+  return o
+}
 
 function createId () {
   return new Date().getTime()
