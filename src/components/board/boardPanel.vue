@@ -15,7 +15,6 @@
 </template>
 
 <script>
-/* eslint-disable*/
 import dragable from './drag'
 import boarderHeader from './boardheader'
 import Card from './boardCard'
@@ -31,29 +30,24 @@ export default {
   },
   computed: {
     boardData () {
-      // if (listcard && container && this.$store.state.current_board.list.length > 0) {
-      //   this.$nextTick(() => {
-      //     listcard.update()
-      //     container.update()
-      //   })
-      // }
       return this.$store.state.current_board
     }
   },
   mounted () {
     this.getBoardData(this.$route.params.board_id)
+  },
+  updated () {
     this.$nextTick(() => {
-    //   listcard = dragable(this.$refs.listcard)
+      if (listcard && container && this.$store.state.current_board.list.length > 0) {
+        this.$nextTick(() => {
+          listcard.update()
+          container.update()
+        })
+      } else {
+        listcard = dragable(this.$refs.listcard)
         container = dragable(this.$refs.container)
-        window.dragable = dragable
-        // window.listcard = this.$refs.listcard
-        // window.containers = this.$refs.container
-        setTimeout(() => {
-          dragable(document.querySelectorAll('.listcard'))
-          console.log('bind listcard')
-        }, 1000)
+      }
     })
-
   },
   methods: {
     getBoardData: function (id) {
