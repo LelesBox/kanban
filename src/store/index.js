@@ -35,6 +35,17 @@ const store = new Vuex.Store({
       api.addList(board_id, list_name).then((list) => {
         commit('ADD_NEWLIST', { list })
       })
+    },
+    UPDATE_LIST_NAME: ({ commit }, { board_id, list_id, list_name }) => {
+      api.updateListNmae(board_id, list_id, list_name).then((list_name) => {
+        commit('UPDATE_LIST_NAME', { board_id, list_id, list_name })
+      })
+    },
+    REMOVE_LIST: ({ commit }, { board_id, list_id }) => {
+      console.log(board_id, list_id)
+      api.removeList(board_id, list_id).then(() => {
+        commit('REMOVE_LIST', { list_id })
+      })
     }
   },
   mutations: {
@@ -51,6 +62,17 @@ const store = new Vuex.Store({
     },
     ADD_NEWLIST: (state, { list }) => {
       state.current_board.list.push(list)
+    },
+    UPDATE_LIST_NAME: (state, { list_id, list_name }) => {
+      for (var i = 0, l = state.current_board.list.length; i < l; i++) {
+        if (list_id === state.current_board.list[i].list_id) {
+          state.current_board.list[i].list_name = list_name
+          break
+        }
+      }
+    },
+    REMOVE_LIST: (state, { list_id }) => {
+      state.current_board.list = state.current_board.list.filter((item) => item.list_id !== list_id)
     }
   }
 })

@@ -110,6 +110,19 @@ function saveBoardData () {
   localStorage.setItem('state', JSON.stringify(stateTree))
 }
 
+// 更改listname
+exports.updateListNmae = function updateListNmae (bid, lid, list_name) {
+  try {
+    var board = stateTree.filter((item) => item.board_id === bid)[0]
+    var list = board.list.filter((item) => item.list_id === lid)[0]
+    list.list_name = list_name
+    saveBoardData()
+    return Promise.resolve(list_name)
+  } catch (e) {
+    return Promise.reject()
+  }
+}
+
 exports.initStore = stateTree
 
 function deepCloneArray (arr) {

@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="container" ref="container">
     <div class="list" drag v-for="list in boardData.list">
-      <div class="list-header" drag-el>{{list.list_name}}</div>
+      <boarder-header :list-id="list.list_id" :name="list.list_name"></boarder-header>
       <div class="list-card" ref="listcard">
         <Card v-for="card in list.cards">
           {{card.text}}
@@ -10,14 +10,17 @@
       <add-card :list-id="list.list_id"></add-card>
     </div>
     <add-list></add-list>
+    <list-option></list-option>
   </div>
 </template>
 
 <script>
 // import dragable from './drag'
+import boarderHeader from './boardheader'
 import Card from './boardCard'
 import addCard from './addcard'
 import addList from './addlist'
+import listOption from './listOption'
 var listcard = null
 var container = null
 
@@ -49,9 +52,11 @@ export default {
     }
   },
   components: {
+    boarderHeader,
     Card,
     addCard,
-    addList
+    addList,
+    listOption
   }
 }
 </script>
@@ -82,14 +87,6 @@ export default {
   -webkit-user-select:none;
   -moz-user-select: none;
   font-size: 14px;
-  .list-header {
-    font-size: 18px;
-    font-weight: bold;
-    min-height: 34px;
-    padding: 10px;
-    white-space: normal;
-    word-break:break-all;
-  }
   .list-card {
     padding: 10px;
   }

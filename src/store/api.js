@@ -32,6 +32,11 @@ exports.addCard = function addCard (bid, lid, text) {
 exports.removeCard = function removeCard (bid, lid, cid) {
   return ls.removeCard(bid, lid, cid)
 }
+
+// 更改listname
+exports.updateListNmae = function updateListNmae (board_id, list_id, list_name) {
+  return ls.updateListNmae(board_id, list_id, list_name)
+}
 exports.getInitState = function getInitState () {
   var boards = ls.initStore.map((item) => {
     return {

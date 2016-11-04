@@ -1,17 +1,17 @@
 <template lang="html">
-  <div class="container">
+  <div class="container" @click="containerClick($event)">
     <div class="header">
-      this is header
+      <!-- this is header -->
     </div>
     <div class="board-header">
       <span class="title left">
-        Vue Plan
+        <!-- Vue Plan -->
       </span>
       <span class="left">
-        😂
+        <!-- 😂 -->
       </span>
       <span>
-        😱 Private
+        <!-- 😱 Private -->
       </span>
       <a class="menu">
         Show Menu
@@ -25,13 +25,21 @@
 
 <script>
 import boardPanel from './boardPanel'
+import eventHub, { CLOSE_HEADER_OPTION } from './eventHub'
+
 export default {
   data () {
     return {}
   },
   computed: {},
   mounted () {},
-  methods: {},
+  methods: {
+    containerClick (e) {
+      if (e.target.className.indexOf('header-option') === -1) {
+        eventHub.$emit(CLOSE_HEADER_OPTION)
+      }
+    }
+  },
   components: {
     boardPanel
   }
