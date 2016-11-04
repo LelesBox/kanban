@@ -95,16 +95,21 @@ function startMove (e) {
     point.startX = e.clientX
     point.startY = e.clientY
     _updateView = updateViews[dragId] || function () {}
+    source = s
+  }
+}
+
+function onMove (e) {
+  // 先移动10像素后才去覆盖source，不然就会把source隐藏起来无法触发绑定在source上的事件
+  if (target === null && source !== null && e.clientX - point.startY > 10) {
+    point.startX = e.clientX
+    point.startY = e.clientY
     setTimeout(function () {
-      source = s
       target = copyElmement(source)
       addClass(source, 'drag-mask')
       document.body.appendChild(target)
     })
   }
-}
-
-function onMove (e) {
   if (target !== null) {
     point.moveX = e.clientX
     point.moveY = e.clientY
@@ -113,10 +118,11 @@ function onMove (e) {
   }
 }
 function stopMove (e) {
-  if (target) {
+  if (target || source) {
     document.body.contains(target) && document.body.removeChild(target)
     removeClass(source, 'drag-mask')
     target = null
+    source = null
   }
 }
 

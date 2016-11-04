@@ -1,11 +1,11 @@
 <template lang="html">
-  <div class="container">
-    <div class="header" drag-el @click="click">
-      <span v-show="!showInput">{{name}}</span>
+  <div class="container header" drag-el @click="click">
+    <!-- <div class="header" drag-el @click="click"> -->
+      <!-- <span v-show="!showInput">{{name}}</span> -->
+      {{name}}
       <div class="input-container" v-show="showInput">
         <input type="text" class="input" v-model="text" @blur="blur" @keyup.enter="blur" ref="input">
       </div>
-    </div>
     <div class="icon-container">
       <i class="fa fa-ellipsis-h icon header-option" @click="openOption" ref="ellipsis"></i>
     </div>
@@ -44,6 +44,7 @@ export default {
       }
     },
     click () {
+      console.log('click')
       this.showInput = true
       this.$nextTick(() => {
         this.$refs.input.focus()
@@ -68,7 +69,6 @@ export default {
   font-size: 18px;
   font-weight: bold;
   min-height: 34px;
-  width: 230px;
   padding: 10px;
   white-space: normal;
   word-break:break-all;
@@ -85,7 +85,7 @@ export default {
 }
 .input {
   display: block;
-  width: 100%;
+  width: 230px;
   height: 100%;
   padding: 10px;
   border-radius: 4px;
@@ -94,10 +94,13 @@ export default {
 }
 .icon-container {
   position: absolute;
+  top:0px;
+  right: 15px;
   padding: 5px;
   height: 40px;
   line-height: 30px;
   display: inline-block;
+  // background-color: green;
 }
 .icon {
   position: relative;
