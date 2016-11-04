@@ -5,10 +5,10 @@ if (stateTree) {
 } else {
   stateTree = [{
     board_id: '0',
-    board_name: '未命名',
+    board_name: '标题名',
     list: [{
       list_id: '0',
-      list_name: '未命名',
+      list_name: '列表名',
       cards: []
     }]
   }]
