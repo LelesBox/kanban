@@ -2,7 +2,7 @@
   <div class="container" ref="container">
     <div class="list" drag v-for="list in boardData.list">
       <boarder-header :list-id="list.list_id" :name="list.list_name"></boarder-header>
-      <div class="list-card" ref="listcard">
+      <div class="list-card listcard" ref="listcard">
         <Card v-for="card in list.cards">
           {{card.text}}
         </Card>
@@ -46,8 +46,12 @@ export default {
     //   listcard = dragable(this.$refs.listcard)
         container = dragable(this.$refs.container)
         window.dragable = dragable
-        window.listcard = this.$refs.listcard
-        window.containers = this.$refs.container
+        // window.listcard = this.$refs.listcard
+        // window.containers = this.$refs.container
+        setTimeout(() => {
+          dragable(document.querySelectorAll('.listcard'))
+          console.log('bind listcard')
+        }, 1000)
     })
 
   },

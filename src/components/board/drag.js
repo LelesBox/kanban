@@ -100,8 +100,10 @@ function startMove (e) {
 }
 
 function onMove (e) {
-  // 先移动10像素后才去覆盖source，不然就会把source隐藏起来无法触发绑定在source上的事件
-  if (target === null && source !== null && e.clientX - point.startY > 10) {
+  // 先移动3像素后才去覆盖source，不然就会把source隐藏起来无法触发绑定在source上的事件
+  var Xoffset = Math.abs(e.clientX - point.startX)
+  var Yoffset = Math.abs(e.clientY - point.startY)
+  if (target === null && source !== null && (Xoffset > 3 || Yoffset > 3)) {
     point.startX = e.clientX
     point.startY = e.clientY
     setTimeout(function () {
