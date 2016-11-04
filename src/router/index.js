@@ -6,7 +6,7 @@ import home from '../home'
 import board from '../components/board'
 
 export default new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
