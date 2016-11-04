@@ -37,17 +37,19 @@ export default {
     this.getBoardData(this.$route.params.board_id)
   },
   updated () {
-    this.$nextTick(() => {
-      if (listcard && container && this.$store.state.current_board.list.length > 0) {
-        this.$nextTick(() => {
-          listcard.update()
-          container.update()
-        })
-      } else {
-        listcard = dragable(this.$refs.listcard)
-        container = dragable(this.$refs.container)
-      }
-    })
+    if (this.$store.state.current_board.list.length > 0) {
+      this.$nextTick(() => {
+        if (listcard && container) {
+          this.$nextTick(() => {
+            listcard.update()
+            container.update()
+          })
+        } else {
+          listcard = dragable(this.$refs.listcard)
+          container = dragable(this.$refs.container)
+        }
+      })
+    }
   },
   methods: {
     getBoardData: function (id) {

@@ -1,7 +1,5 @@
 <template lang="html">
-  <div class="container header" drag-el @click="click">
-    <!-- <div class="header" drag-el @click="click"> -->
-      <!-- <span v-show="!showInput">{{name}}</span> -->
+  <div class="container header" drag-el @click="click($event)">
       {{name}}
       <div class="input-container" v-show="showInput">
         <input type="text" class="input" v-model="text" @blur="blur" @keyup.enter="blur" ref="input">
@@ -43,12 +41,13 @@ export default {
         })
       }
     },
-    click () {
-      console.log('click')
-      this.showInput = true
-      this.$nextTick(() => {
-        this.$refs.input.focus()
-      })
+    click (e) {
+      if (e.target !== this.$refs.ellipsis) {
+        this.showInput = true
+        this.$nextTick(() => {
+          this.$refs.input.focus()
+        })
+      }
     },
     openOption () {
       var p = this.$refs.ellipsis.getBoundingClientRect()

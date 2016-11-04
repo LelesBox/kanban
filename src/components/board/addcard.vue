@@ -66,7 +66,7 @@ export default {
       this.show_textarea = false
     },
     addCard () {
-      if (this.text !== '') {
+      if (this.text.trim() !== '') {
         this.$store.dispatch('ADD_CARD', { text: this.text, board_id: this.boardId, list_id: this.listId })
         this.text = ''
         this.$nextTick(() => {
