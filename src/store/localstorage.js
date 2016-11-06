@@ -182,3 +182,8 @@ function createId () {
 }
 
 window.lc = function () { localStorage.clear() }
+window.s = function () {
+  stateTree[0].list.forEach(item => {
+    console.log(item.cards.map(item => item.text))
+  })
+}

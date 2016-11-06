@@ -47,9 +47,11 @@ const store = new Vuex.Store({
       })
     },
     UPDATE_CARD_POSITION: ({ commit }, { board_id, removed, insert }) => {
+      console.log('CARD', removed, insert)
       api.updateCardPosition(board_id, removed, insert)
     },
     UPDATE_LIST_POSITION: ({ commit }, { board_id, removed, insert }) => {
+      console.log('LIST', removed, insert)
       api.updateListPosition(board_id, removed, insert)
     }
   },

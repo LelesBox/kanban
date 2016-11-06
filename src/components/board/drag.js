@@ -65,7 +65,7 @@ export default function dragable (elms, cb, id) {
       elms[i].setAttribute('drag-id', index)
     }
   }
-  updateViews[index] = applyDrag(elms, cb)
+  updateViews[index] = applyDrag(elms, index, cb)
   return {
     update: function () {
       dragable(elms, cb, index)
@@ -128,15 +128,12 @@ function stopMove (e) {
   }
 }
 
-function applyDrag (container, cb) {
+function applyDrag (container, dragIndex, cb) {
   var containers = []
   var elms = []
-  var containerIdx = 0
   if (container.length !== undefined) {
     for (var i = 0, l = container.length; i < l; i++) {
-      var key = containerIdx++
       var children = container[i].children
-      container[i].setAttribute('drag-list', key)
       containers.push(container[i])
       for (var j = 0, jlength = children.length; j < jlength; j++) {
         if (children[j].getAttribute('drag') !== null) {
@@ -145,10 +142,8 @@ function applyDrag (container, cb) {
       }
     }
   } else {
-    key = containerIdx++
     containers.push(container)
     children = container.children
-    container.setAttribute('drag-list', key)
     for (var k = 0, klength = children.length; k < klength; k++) {
       if (children[k].getAttribute('drag') !== null) {
         elms.push(children[k])
@@ -170,12 +165,12 @@ function applyDrag (container, cb) {
       var cot = containers[j]
       if (cot === sourceElm.parentNode) continue
       if (cot.children.length === 0 && getOVerlayElm(elm, cot.parentNode, 0.7)) {
-        var sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+        var sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
         var sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
         var targetElmIdx = 0
-        var targetListName = Number(cot.getAttribute('drag-list'))
-        var removed = { list: sourceListName, index: sourceElmIdx }
-        var insert = { list: targetListName, index: targetElmIdx }
+        var targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), cot)
+        var removed = { list: sourceListIdx, index: sourceElmIdx }
+        var insert = { list: targetListIdx, index: targetElmIdx }
         cot.appendChild(sourceElm)
         cb({removed, insert})
         return
@@ -198,23 +193,22 @@ function applyDrag (container, cb) {
           // 不得不说，js的循环真的很快，每次拖动都去遍历近100个元素都不见卡顿
           if (targetIdx < i) {
             sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-            sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
-            // move
+            sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
             el.parentNode.insertBefore(sourceElm, el.nextSibling)
             exchange(elms, targetIdx, i)
             targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-            removed = { list: sourceListName, index: sourceElmIdx }
-            insert = { list: sourceListName, index: targetElmIdx }
+            removed = { list: sourceListIdx, index: sourceElmIdx }
+            insert = { list: sourceListIdx, index: targetElmIdx }
             cb({removed, insert})
           } else if (targetIdx > i) {
             sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-            sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+            sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
             // move
             el.parentNode.insertBefore(sourceElm, el)
             exchange(elms, targetIdx, i)
             targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-            removed = { list: sourceListName, index: sourceElmIdx }
-            insert = { list: sourceListName, index: targetElmIdx }
+            removed = { list: sourceListIdx, index: sourceElmIdx }
+            insert = { list: sourceListIdx, index: targetElmIdx }
             cb({removed, insert})
           }
           return
@@ -223,21 +217,21 @@ function applyDrag (container, cb) {
         b = el.getBoundingClientRect()
         if (a.top > b.top) {
           sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+          sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
           el.parentNode.insertBefore(sourceElm, el.nextSibling)
           targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          targetListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
-          removed = { list: sourceListName, index: sourceElmIdx }
-          insert = { list: targetListName, index: targetElmIdx }
+          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
+          removed = { list: sourceListIdx, index: sourceElmIdx }
+          insert = { list: targetListIdx, index: targetElmIdx }
           cb({removed, insert})
         } else if (a.bottom < b.bottom) {
           sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+          sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
           el.parentNode.insertBefore(sourceElm, el)
           targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          targetListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
-          removed = { list: sourceListName, index: sourceElmIdx }
-          insert = { list: targetListName, index: targetElmIdx }
+          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
+          removed = { list: sourceListIdx, index: sourceElmIdx }
+          insert = { list: targetListIdx, index: targetElmIdx }
           cb({removed, insert})
         }
         return
