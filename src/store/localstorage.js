@@ -1,6 +1,8 @@
 var localStorage = window.localStorage
 var stateTree = localStorage.getItem('state')
-if (stateTree) {
+var localVersion = localStorage.getItem('vue-drag-version')
+var Version = '1'
+if (stateTree && localVersion && localVersion === Version) {
   stateTree = JSON.parse(stateTree)
 } else {
   stateTree = [{
@@ -146,6 +148,7 @@ exports.initStore = stateTree
 
 function saveBoardData () {
   localStorage.setItem('state', JSON.stringify(stateTree))
+  localStorage.setItem('vue-drag-version', Version)
 }
 
 function deepCloneArray (arr) {
