@@ -14,7 +14,7 @@
         <!-- 😱 Private -->
       </span>
       <a class="menu">
-        Show Menu
+        <!-- Show Menu -->
       </a>
     </div>
     <div class="panel">

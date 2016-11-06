@@ -106,10 +106,6 @@ exports.removeCard = function removeCard (bid, lid, cid) {
   }
 }
 
-function saveBoardData () {
-  localStorage.setItem('state', JSON.stringify(stateTree))
-}
-
 // 更改listname
 exports.updateListNmae = function updateListNmae (bid, lid, list_name) {
   try {
@@ -123,7 +119,34 @@ exports.updateListNmae = function updateListNmae (bid, lid, list_name) {
   }
 }
 
+// 更新卡片位置信息
+exports.updateCardPosition = function (board_id, removed, insert) {
+  var rmlistIdx = removed.list
+  var rmcardIdx = removed.index
+  var inslistIdx = insert.list
+  var inscardIdx = insert.index
+  var board = stateTree.filter((item) => item.board_id === board_id)[0]
+  var rmlist = board.list[rmlistIdx]
+  var rmCardValue = rmlist.cards.splice(rmcardIdx, 1)[0]
+  var inslist = board.list[inslistIdx]
+  inslist.cards.splice(inscardIdx, 0, rmCardValue)
+  saveBoardData()
+}
+
+exports.updateListPosition = function (board_id, removed, insert) {
+  var rmlistIdx = removed.index
+  var inslistIdx = insert.index
+  var board = stateTree.filter((item) => item.board_id === board_id)[0]
+  var rmlist = board.list.splice(rmlistIdx, 1)[0]
+  board.list.splice(inslistIdx, 0, rmlist)
+  saveBoardData()
+}
+
 exports.initStore = stateTree
+
+function saveBoardData () {
+  localStorage.setItem('state', JSON.stringify(stateTree))
+}
 
 function deepCloneArray (arr) {
   return arr.map((item) => {

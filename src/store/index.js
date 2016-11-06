@@ -46,6 +46,12 @@ const store = new Vuex.Store({
       api.removeList(board_id, list_id).then(() => {
         commit('REMOVE_LIST', { list_id })
       })
+    },
+    UPDATE_CARD_POSITION: ({ commit }, { board_id, removed, insert }) => {
+      api.updateCardPosition(board_id, removed, insert)
+    },
+    UPDATE_LIST_POSITION: ({ commit }, { board_id, removed, insert }) => {
+      api.updateListPosition(board_id, removed, insert)
     }
   },
   mutations: {

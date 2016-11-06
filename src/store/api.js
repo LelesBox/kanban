@@ -37,6 +37,15 @@ exports.removeCard = function removeCard (bid, lid, cid) {
 exports.updateListNmae = function updateListNmae (board_id, list_id, list_name) {
   return ls.updateListNmae(board_id, list_id, list_name)
 }
+
+exports.updateCardPosition = function (board_id, removed, insert) {
+  return ls.updateCardPosition(board_id, removed, insert)
+}
+
+exports.updateListPosition = function (board_id, removed, insert) {
+  return ls.updateListPosition(board_id, removed, insert)
+}
+
 exports.getInitState = function getInitState () {
   var boards = ls.initStore.map((item) => {
     return {

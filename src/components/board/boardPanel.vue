@@ -45,8 +45,12 @@ export default {
             container.update()
           })
         } else {
-          listcard = dragable(this.$refs.listcard)
-          container = dragable(this.$refs.container)
+          listcard = dragable(this.$refs.listcard, ({ removed, insert }) => {
+            this.$store.dispatch('UPDATE_CARD_POSITION', { board_id: this.$route.params.board_id, removed, insert })
+          })
+          container = dragable(this.$refs.container, ({ removed, insert }) => {
+            this.$store.dispatch('UPDATE_LIST_POSITION', { board_id: this.$route.params.board_id, removed, insert })
+          })
         }
       })
     }

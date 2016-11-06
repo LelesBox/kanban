@@ -51,7 +51,7 @@ on(document, 'mousemove', onMove)
 on(document, 'mouseup', stopMove)
 on(document, 'mouseleave', stopMove)
 
-export default function dragable (elms, id) {
+export default function dragable (elms, cb, id) {
   var index = 0
   if (id !== undefined) {
     index = id
@@ -65,10 +65,10 @@ export default function dragable (elms, id) {
       elms[i].setAttribute('drag-id', index)
     }
   }
-  updateViews[index] = applyDrag(elms)
+  updateViews[index] = applyDrag(elms, cb)
   return {
     update: function () {
-      dragable(elms, index)
+      dragable(elms, cb, index)
     }
   }
 }
@@ -128,12 +128,15 @@ function stopMove (e) {
   }
 }
 
-function applyDrag (container) {
+function applyDrag (container, cb) {
   var containers = []
   var elms = []
+  var containerIdx = 0
   if (container.length !== undefined) {
     for (var i = 0, l = container.length; i < l; i++) {
+      var key = containerIdx++
       var children = container[i].children
+      container[i].setAttribute('drag-list', key)
       containers.push(container[i])
       for (var j = 0, jlength = children.length; j < jlength; j++) {
         if (children[j].getAttribute('drag') !== null) {
@@ -142,8 +145,10 @@ function applyDrag (container) {
       }
     }
   } else {
+    key = containerIdx++
     containers.push(container)
     children = container.children
+    container.setAttribute('drag-list', key)
     for (var k = 0, klength = children.length; k < klength; k++) {
       if (children[k].getAttribute('drag') !== null) {
         elms.push(children[k])
@@ -165,7 +170,14 @@ function applyDrag (container) {
       var cot = containers[j]
       if (cot === sourceElm.parentNode) continue
       if (cot.children.length === 0 && getOVerlayElm(elm, cot.parentNode, 0.7)) {
+        var sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+        var sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+        var targetElmIdx = 0
+        var targetListName = Number(cot.getAttribute('drag-list'))
+        var removed = { list: sourceListName, index: sourceElmIdx }
+        var insert = { list: targetListName, index: targetElmIdx }
         cot.appendChild(sourceElm)
+        cb({removed, insert})
         return
       }
     }
@@ -185,20 +197,48 @@ function applyDrag (container) {
           // 接着调换targetIdx和i，这样他们的顺序就正常了，接在在下一次循环的时候就能正常触发 targetIdx > i的情况
           // 不得不说，js的循环真的很快，每次拖动都去遍历近100个元素都不见卡顿
           if (targetIdx < i) {
+            sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+            // move
             el.parentNode.insertBefore(sourceElm, el.nextSibling)
             exchange(elms, targetIdx, i)
+            targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            removed = { list: sourceListName, index: sourceElmIdx }
+            insert = { list: sourceListName, index: targetElmIdx }
+            cb({removed, insert})
           } else if (targetIdx > i) {
+            sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+            // move
             el.parentNode.insertBefore(sourceElm, el)
             exchange(elms, targetIdx, i)
+            targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            removed = { list: sourceListName, index: sourceElmIdx }
+            insert = { list: sourceListName, index: targetElmIdx }
+            cb({removed, insert})
           }
           return
         }
       } else if (getOVerlayElm(elm, el, 0.5)) {
         b = el.getBoundingClientRect()
         if (a.top > b.top) {
+          sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+          sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
           el.parentNode.insertBefore(sourceElm, el.nextSibling)
+          targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+          targetListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+          removed = { list: sourceListName, index: sourceElmIdx }
+          insert = { list: targetListName, index: targetElmIdx }
+          cb({removed, insert})
         } else if (a.bottom < b.bottom) {
+          sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+          sourceListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
           el.parentNode.insertBefore(sourceElm, el)
+          targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+          targetListName = Number(sourceElm.parentNode.getAttribute('drag-list'))
+          removed = { list: sourceListName, index: sourceElmIdx }
+          insert = { list: targetListName, index: targetElmIdx }
+          cb({removed, insert})
         }
         return
       }
@@ -230,8 +270,8 @@ function findIndex (arr, target) {
       return i
     }
   }
-  return -1
 }
+
 // 成功则返回target 能不能用VDOM保存起来这些数据
 function getOVerlayElm (source, target, threshold) {
   var p1 = source.getBoundingClientRect()
