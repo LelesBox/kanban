@@ -42,7 +42,6 @@ const store = new Vuex.Store({
       })
     },
     REMOVE_LIST: ({ commit }, { board_id, list_id }) => {
-      console.log(board_id, list_id)
       api.removeList(board_id, list_id).then(() => {
         commit('REMOVE_LIST', { list_id })
       })
