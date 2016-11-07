@@ -25,6 +25,7 @@ exports.getBoardData = function getBoardData (id) {
   if (!board) {
     board = new Board(id, '未命名', [])
     stateTree.push(board)
+    // 这里不需要保存新生产的board，因为它根本没有数据
   }
   return Promise.resolve(deepClone(board))
 }
