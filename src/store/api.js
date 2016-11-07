@@ -55,6 +55,6 @@ exports.getInitState = function getInitState () {
   })
   return {
     boards,
-    current_board: []
+    current_board: {}
   }
 }

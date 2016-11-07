@@ -22,6 +22,10 @@ exports.getBoardData = function getBoardData (id) {
   var board = stateTree.filter((item) => {
     return id === item.board_id
   })[0]
+  if (!board) {
+    board = new Board(id, '未命名', [])
+    stateTree.push(board)
+  }
   return Promise.resolve(deepClone(board))
 }
 
@@ -57,6 +61,10 @@ exports.addList = function addList (id, name) {
     var board = stateTree.filter((item) => {
       return item.board_id === id
     })[0]
+    if (!board) {
+      board = new Board(id, '未命名', [])
+      stateTree.push(board)
+    }
     board.list.push(list)
     saveBoardData()
     return Promise.resolve(deepClone(list))
@@ -182,6 +190,12 @@ function deepClone (obj) {
 
 function createId () {
   return new Date().getTime() + ''
+}
+
+function Board (id, board_name, list) {
+  this.board_id = id
+  this.board_name = board_name
+  this.list = list
 }
 
 window.lc = function () { localStorage.clear() }
