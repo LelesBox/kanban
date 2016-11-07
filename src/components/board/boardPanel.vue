@@ -37,7 +37,7 @@ export default {
     this.getBoardData(this.$route.params.board_id)
   },
   updated () {
-    if (this.$store.state.current_board.list.length > 0) {
+    if (this.$store.state.current_board.list && this.$store.state.current_board.list.length > 0) {
       this.$nextTick(() => {
         if (listcard && container) {
           this.$nextTick(() => {
