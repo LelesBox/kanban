@@ -62,6 +62,7 @@ export default {
   // height: 120px;
   width: 200px;
   background-color: #fff;
+  box-shadow: 0 0 10px 1px darken(#fff, 20%);
 }
 .option-ul {
   margin: 0;
