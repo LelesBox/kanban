@@ -4,6 +4,7 @@ import Vue from 'vue'
 import app from './app'
 import router from './router/'
 import store from './store/'
+require('./directives/drag.js')
 
 /* eslint-disable no-new */
 new Vue({
