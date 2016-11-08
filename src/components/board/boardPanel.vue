@@ -3,7 +3,7 @@
     <div class="list" drag v-for="list in boardData.list">
       <boarder-header :list-id="list.list_id" :name="list.list_name"></boarder-header>
       <div class="list-card listcard" ref="listcard">
-        <Card v-for="card in list.cards">
+        <Card v-for="card in list.cards" :card-id="card.card_id" :list-id="list.list_id">
           {{card.text}}
         </Card>
       </div>
@@ -11,6 +11,7 @@
     </div>
     <add-list></add-list>
     <list-option></list-option>
+    <card-overlay></card-overlay>
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import Card from './boardCard'
 import addCard from './addcard'
 import addList from './addlist'
 import listOption from './listOption'
+import cardOverlay from './cardOverlay'
 var listcard = null
 var container = null
 
@@ -65,7 +67,8 @@ export default {
     Card,
     addCard,
     addList,
-    listOption
+    listOption,
+    cardOverlay
   }
 }
 </script>

@@ -31,6 +31,16 @@ const store = new Vuex.Store({
         commit('ADD_CARD_DATA', { list_id, card })
       })
     },
+    UPDATE_CARD: ({ commit, state }, { list_id, card_id, text }) => {
+      api.updateCard(state.current_board.board_id, list_id, card_id, text).then((card) => {
+        // commit('UPDATE_CARD', { list_id, card_id, text })
+      })
+    },
+    REMOVE_CARD: ({ commit, state }, { list_id, card_id }) => {
+      api.removeCard(state.current_board.board_id, list_id, card_id).then((card) => {
+        // commit('REMOVE_CARD', { list_id, card_id })
+      })
+    },
     ADD_NEWLIST: ({ commit }, { list_name, board_id }) => {
       api.addList(board_id, list_name).then((list) => {
         commit('ADD_NEWLIST', { list })
@@ -49,10 +59,14 @@ const store = new Vuex.Store({
     UPDATE_CARD_POSITION: ({ commit }, { board_id, removed, insert }) => {
       console.log('CARD', removed, insert)
       api.updateCardPosition(board_id, removed, insert)
+      commit('UPDATE_CARD_POSITION', { removed, insert })
     },
     UPDATE_LIST_POSITION: ({ commit }, { board_id, removed, insert }) => {
       console.log('LIST', removed, insert)
-      api.updateListPosition(board_id, removed, insert)
+      api.updateListPosition(board_id, removed, insert).then((board) => {
+        // console.log(board)
+        commit('UPDATE_LIST_POSITION', { board })
+      })
     }
   },
   mutations: {
@@ -80,6 +94,40 @@ const store = new Vuex.Store({
     },
     REMOVE_LIST: (state, { list_id }) => {
       state.current_board.list = state.current_board.list.filter((item) => item.list_id !== list_id)
+    },
+    UPDATE_CARD: (state, { list_id, card_id, text }) => {
+      for (var i = 0, l = state.current_board.list.length; i < l; i++) {
+        if (state.current_board.list[i].list_id === list_id) {
+          for (var j = 0, k = state.current_board.list[i].cards.length; j < k; j++) {
+            if (state.current_board.list[i].cards[j].card_id === card_id) {
+              state.current_board.list[i].cards[j].text = text
+              break
+            }
+          }
+          break
+        }
+      }
+    },
+    REMOVE_CARD: (state, { list_id, card_id }) => {
+      for (var i = 0, l = state.current_board.list.length; i < l; i++) {
+        if (state.current_board.list[i].list_id === list_id) {
+          for (var j = 0, k = state.current_board.list[i].cards.length; j < k; j++) {
+            if (state.current_board.list[i].cards[j].card_id === card_id) {
+              state.current_board.list[i].cards.splice(j, 1)
+              break
+            }
+          }
+          break
+        }
+      }
+    },
+    UPDATE_CARD_POSITION: (state, { removed, insert }) => {
+      // var card = state.current_board.list[removed.list].cards.splice(removed.index, 1)
+      // state.current_board.list[insert.list].cards.splice(insert.index, 0, card)
+    },
+    UPDATE_LIST_POSITION: (state, { board }) => {
+      // console.log('board', board)
+      // state.current_board = board
     }
   }
 })

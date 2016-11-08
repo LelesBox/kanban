@@ -33,15 +33,22 @@ exports.removeCard = function removeCard (bid, lid, cid) {
   return ls.removeCard(bid, lid, cid)
 }
 
+// 更新卡片内容
+exports.updateCard = function updateCard (board_id, list_id, card_id, text) {
+  return ls.updateCard(board_id, list_id, card_id, text)
+}
+
 // 更改listname
 exports.updateListNmae = function updateListNmae (board_id, list_id, list_name) {
   return ls.updateListNmae(board_id, list_id, list_name)
 }
 
+// 更新卡片位置
 exports.updateCardPosition = function (board_id, removed, insert) {
   return ls.updateCardPosition(board_id, removed, insert)
 }
 
+// 更新列表位置
 exports.updateListPosition = function (board_id, removed, insert) {
   return ls.updateListPosition(board_id, removed, insert)
 }

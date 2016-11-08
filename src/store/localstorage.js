@@ -103,6 +103,21 @@ exports.addCard = function addCard (bid, lid, text) {
     return Promise.reject(e)
   }
 }
+
+// 更新卡片内容
+exports.updateCard = function updateCard (board_id, list_id, card_id, text) {
+  try {
+    var board = stateTree.filter((item) => item.board_id === board_id)[0]
+    var list = board.list.filter((item) => item.list_id === list_id)[0]
+    var card = list.cards.filter((item) => item.card_id === card_id)[0]
+    card.text = text
+    saveBoardData()
+    return Promise.resolve(deepClone(card))
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
 // 删除卡片
 exports.removeCard = function removeCard (bid, lid, cid) {
   try {
@@ -142,6 +157,7 @@ exports.updateCardPosition = function (board_id, removed, insert) {
   var inslist = board.list[inslistIdx]
   inslist.cards.splice(inscardIdx, 0, rmCardValue)
   saveBoardData()
+  return Promise.resolve(deepClone(board))
 }
 
 exports.updateListPosition = function (board_id, removed, insert) {
@@ -151,6 +167,7 @@ exports.updateListPosition = function (board_id, removed, insert) {
   var rmlist = board.list.splice(rmlistIdx, 1)[0]
   board.list.splice(inslistIdx, 0, rmlist)
   saveBoardData()
+  return Promise.resolve(deepClone(board))
 }
 
 exports.initStore = stateTree
