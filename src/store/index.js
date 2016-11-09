@@ -32,13 +32,14 @@ const store = new Vuex.Store({
       })
     },
     UPDATE_CARD: ({ commit, state }, { list_id, card_id, text }) => {
+      console.log(list_id, card_id, text)
       api.updateCard(state.current_board.board_id, list_id, card_id, text).then((card) => {
-        // commit('UPDATE_CARD', { list_id, card_id, text })
+        commit('UPDATE_CARD', { list_id, card_id, text })
       })
     },
     REMOVE_CARD: ({ commit, state }, { list_id, card_id }) => {
       api.removeCard(state.current_board.board_id, list_id, card_id).then((card) => {
-        // commit('REMOVE_CARD', { list_id, card_id })
+        commit('REMOVE_CARD', { list_id, card_id })
       })
     },
     ADD_NEWLIST: ({ commit }, { list_name, board_id }) => {
@@ -57,14 +58,13 @@ const store = new Vuex.Store({
       })
     },
     UPDATE_CARD_POSITION: ({ commit }, { board_id, removed, insert }) => {
-      api.updateCardPosition(board_id, removed, insert)
-      commit('UPDATE_CARD_POSITION', { removed, insert })
+      api.updateCardPosition(board_id, removed, insert).then((board) => {
+        // commit('UPDATE_CARD_POSITION', { removed, insert })
+      })
     },
     UPDATE_LIST_POSITION: ({ commit }, { board_id, removed, insert }) => {
-      console.log('LIST', removed, insert)
       api.updateListPosition(board_id, removed, insert).then((board) => {
-        // console.log(board)
-        commit('UPDATE_LIST_POSITION', { board })
+        // commit('UPDATE_LIST_POSITION', { board })
       })
     }
   },
@@ -119,16 +119,6 @@ const store = new Vuex.Store({
           break
         }
       }
-    },
-    UPDATE_CARD_POSITION: (state, { removed, insert }) => {
-      console.log('CARD', removed, insert)
-      // var card = state.current_board.list[removed.list].cards.splice(removed.index, 1)
-      // state.current_board.list[insert.list].cards.splice(insert.index, 0, card)
-      // console.log(state.current_board.list)
-    },
-    UPDATE_LIST_POSITION: (state, { board }) => {
-      // console.log('board', board)
-      // state.current_board = board
     }
   }
 })

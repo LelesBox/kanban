@@ -24,7 +24,6 @@ export default {
   methods: {
     edit () {
       var position = this.$el.getBoundingClientRect()
-      console.log(this.$slots.default[0].text)
       eventHub.$emit(OPEN_CARD_EDIT_PANEL, {
         left: position.left,
         top: position.top,
@@ -33,8 +32,7 @@ export default {
         text: this.$slots.default[0].text.trim()
       })
     }
-  },
-  components: {}
+  }
 }
 </script>
 
