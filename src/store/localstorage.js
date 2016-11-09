@@ -126,13 +126,20 @@ exports.updateCard = function updateCard (board_id, list_id, card_id, text) {
 }
 
 // 删除卡片
-exports.removeCard = function removeCard (bid, lid, cid) {
+exports.removeCard = function removeCard (board_id, lid, card_id) {
   try {
-    var board = stateTree.filter((item) => item.board_id === bid)[0]
-    var list = board.list.filter((item) => item.list_id === lid)[0]
-    var cards = list.cards.filter((item) => item.card_id !== cid)
-    list.cards = cards
-    saveBoardData()
+    var board = stateTree.filter((item) => item.board_id === board_id)[0]
+    for (var i = 0, l = board.list.length; i < l; i++) {
+      var list = board.list[i]
+      for (var j = 0, k = list.cards.length; j < k; j++) {
+        var card = list.cards[j]
+        if (card.card_id === card_id) {
+          list.cards.splice(j, 1)
+          saveBoardData()
+          return Promise.resolve(deepClone(card))
+        }
+      }
+    }
     return Promise.resolve()
   } catch (e) {
     return Promise.reject()
