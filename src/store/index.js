@@ -57,7 +57,6 @@ const store = new Vuex.Store({
       })
     },
     UPDATE_CARD_POSITION: ({ commit }, { board_id, removed, insert }) => {
-      console.log('CARD', removed, insert)
       api.updateCardPosition(board_id, removed, insert)
       commit('UPDATE_CARD_POSITION', { removed, insert })
     },
@@ -122,8 +121,10 @@ const store = new Vuex.Store({
       }
     },
     UPDATE_CARD_POSITION: (state, { removed, insert }) => {
+      console.log('CARD', removed, insert)
       // var card = state.current_board.list[removed.list].cards.splice(removed.index, 1)
       // state.current_board.list[insert.list].cards.splice(insert.index, 0, card)
+      // console.log(state.current_board.list)
     },
     UPDATE_LIST_POSITION: (state, { board }) => {
       // console.log('board', board)

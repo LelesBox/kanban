@@ -37,6 +37,9 @@ var target = null
 var source = null
 // 在元素块拖动的时候会触发，可用于检测是否触碰到浏览器边缘可以自定义滚动
 var onmove = null
+
+// var updateDom = UpdateSchema()
+// var defaultUpdateDomMethod = UpdateSchema()
 // 移动的记录节点
 var point = {
   startX: 0,
@@ -69,6 +72,9 @@ export default function dragable (elms, cb, id) {
   return {
     update: function () {
       dragable(elms, cb, index)
+    },
+    OverrideUpdateDOM: function (update) {
+      updateViews[index] = applyDrag(elms, index, cb, update)
     }
   }
 }
@@ -76,7 +82,39 @@ dragable.onmove = function (cb) {
   onmove = cb
 }
 
-module.exports = dragable
+function Dragable () {
+  this.updateDOMMethod = UpdateSchema()
+  this.index = idx++
+  this.elms = null
+  this.cb = null
+}
+Dragable.prototype.setUpdateSchema = function (updateMethod) {
+  this.updateDOMMethod = updateMethod || this.updateDOMMethod
+}
+Dragable.prototype.on = function (elms, cb, id) {
+  this.elms = elms
+  this.cb = cb
+  if (elms.length === undefined) {
+    elms.setAttribute('drag-id', this.index)
+  } else {
+    for (var i = 0, l = elms.length; i < l; i++) {
+      elms[i].setAttribute('drag-id', this.index)
+    }
+  }
+  updateViews[this.index] = applyDrag(elms, this.index, cb, this.updateDOMMethod)
+}
+Dragable.prototype.update = function () {
+  if (this.elms.length === undefined) {
+    this.elms.setAttribute('drag-id', this.index)
+  } else {
+    for (var i = 0, l = this.elms.length; i < l; i++) {
+      this.elms[i].setAttribute('drag-id', this.index)
+    }
+  }
+  updateViews[this.index] = applyDrag(this.elms, this.index, this.cb, this.updateDOMMethod)
+}
+
+module.exports = Dragable
 // 开始移动
 // 有时候触发的e.target并不是我们想要的元素，可能我们想要的元素都被子元素给铺满了，这时候无论怎么点
 // e.target永远不会是我们想要的元素，这时候，我们可以知道元素里面的某一个元素去监听
@@ -128,7 +166,7 @@ function stopMove (e) {
   }
 }
 
-function applyDrag (container, dragIndex, cb) {
+function applyDrag (container, dragIndex, cb, updateDom) {
   var containers = []
   var elms = []
   if (container.length !== undefined) {
@@ -171,8 +209,10 @@ function applyDrag (container, dragIndex, cb) {
         var targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), cot)
         var removed = { list: sourceListIdx, index: sourceElmIdx }
         var insert = { list: targetListIdx, index: targetElmIdx }
-        cot.appendChild(sourceElm)
-        cb({removed, insert})
+        elms.push(elms.splice(targetIdx, 1)[0])
+        if (updateDom.NewConatiner(sourceElm, cot, { removed, insert })) {
+          cb({removed, insert})
+        }
         return
       }
     }
@@ -186,30 +226,26 @@ function applyDrag (container, dragIndex, cb) {
         // 2. 如果el与sourceElm不属于同一个父容器
       if (el.parentNode === sourceElm.parentNode) {
         if (getOVerlayElm(elm, el, 0.7)) {
-          // 当跨容器拖动的时候你可能会纳闷elms顺序都变了，就会出现上下元素但是elms位置完全相反的情况
-          // 但是仔细想想，如果对调了，一个元素从下往上拖，但是它的targetIdx < i。
-          // 那么执行el.parentNode.insertBefore(sourceElm, el.nextSibling)的时候，el.nextSibling相当于sourceElm。所以insert步骤什么都没做
-          // 接着调换targetIdx和i，这样他们的顺序就正常了，接在在下一次循环的时候就能正常触发 targetIdx > i的情况
-          // 不得不说，js的循环真的很快，每次拖动都去遍历近100个元素都不见卡顿
           if (targetIdx < i) {
             sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
             sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
-            el.parentNode.insertBefore(sourceElm, el.nextSibling)
-            exchange(elms, targetIdx, i)
-            targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            targetElmIdx = findIndex(sourceElm.parentNode.children, el)
             removed = { list: sourceListIdx, index: sourceElmIdx }
             insert = { list: sourceListIdx, index: targetElmIdx }
-            cb({removed, insert})
+            exchange(elms, targetIdx, i)
+            if (updateDom.Down(sourceElm, el, { removed, insert })) {
+              cb({removed, insert})
+            }
           } else if (targetIdx > i) {
             sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
             sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
-            // move
-            el.parentNode.insertBefore(sourceElm, el)
-            exchange(elms, targetIdx, i)
-            targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
+            targetElmIdx = findIndex(sourceElm.parentNode.children, el)
             removed = { list: sourceListIdx, index: sourceElmIdx }
             insert = { list: sourceListIdx, index: targetElmIdx }
-            cb({removed, insert})
+            exchange(elms, targetIdx, i)
+            if (updateDom.Up(sourceElm, el, { removed, insert })) {
+              cb({removed, insert})
+            }
           }
           return
         }
@@ -218,21 +254,27 @@ function applyDrag (container, dragIndex, cb) {
         if (a.top > b.top) {
           sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
           sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
-          el.parentNode.insertBefore(sourceElm, el.nextSibling)
-          targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
+          targetElmIdx = findIndex(el.parentNode.children, el.nextSibling) || el.parentNode.children.length
+          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), el.parentNode)
           removed = { list: sourceListIdx, index: sourceElmIdx }
           insert = { list: targetListIdx, index: targetElmIdx }
-          cb({removed, insert})
+          elms.splice(i + 1, 0, sourceElm)
+          targetIdx > i ? elms.splice(targetIdx + 1, 1) : elms.splice(targetIdx, 1)
+          if (updateDom.CrossDown(sourceElm, el, { removed, insert })) {
+            cb({removed, insert})
+          }
         } else if (a.bottom < b.bottom) {
           sourceElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
           sourceListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
-          el.parentNode.insertBefore(sourceElm, el)
-          targetElmIdx = findIndex(sourceElm.parentNode.children, sourceElm)
-          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), sourceElm.parentNode)
+          targetElmIdx = findIndex(el.parentNode.children, el)
+          targetListIdx = findIndex(document.querySelectorAll('[drag-id="' + dragIndex + '"]'), el.parentNode)
           removed = { list: sourceListIdx, index: sourceElmIdx }
           insert = { list: targetListIdx, index: targetElmIdx }
-          cb({removed, insert})
+          elms.splice(i, 0, sourceElm)
+          targetIdx > i ? elms.splice(targetIdx + 1, 1) : elms.splice(targetIdx, 1)
+          if (updateDom.CrossUp(sourceElm, el, { removed, insert })) {
+            cb({removed, insert})
+          }
         }
         return
       }
@@ -281,4 +323,29 @@ function getOVerlayElm (source, target, threshold) {
     }
   }
   return null
+}
+
+function UpdateSchema () {
+  return {
+    NewConatiner: function (sourceElm, container) {
+      container.appendChild(sourceElm)
+      return true
+    },
+    Up: function (sourceElm, el) {
+      el.parentNode.insertBefore(sourceElm, el)
+      return true
+    },
+    Down: function (sourceElm, el) {
+      el.parentNode.insertBefore(sourceElm, el.nextSibling)
+      return true
+    },
+    CrossUp: function (sourceElm, el) {
+      el.parentNode.insertBefore(sourceElm, el)
+      return true
+    },
+    CrossDown: function (sourceElm, el) {
+      el.parentNode.insertBefore(sourceElm, el.nextSibling)
+      return true
+    }
+  }
 }

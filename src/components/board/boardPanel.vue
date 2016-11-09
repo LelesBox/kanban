@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import dragable from './drag'
+import Dragable from './drag'
 import boarderHeader from './boardheader'
 import Card from './boardCard'
 import addCard from './addcard'
@@ -47,10 +47,13 @@ export default {
             container.update()
           })
         } else {
-          listcard = dragable(this.$refs.listcard, ({ removed, insert }) => {
+          listcard = new Dragable()
+          listcard.on(this.$refs.listcard, ({ removed, insert }) => {
             this.$store.dispatch('UPDATE_CARD_POSITION', { board_id: this.$route.params.board_id, removed, insert })
           })
-          container = dragable(this.$refs.container, ({ removed, insert }) => {
+          container = new Dragable()
+          container.UpdateSchema = function () {}
+          container.on(this.$refs.container, ({ removed, insert }) => {
             this.$store.dispatch('UPDATE_LIST_POSITION', { board_id: this.$route.params.board_id, removed, insert })
           })
         }
