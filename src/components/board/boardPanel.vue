@@ -52,7 +52,6 @@ export default {
             this.$store.dispatch('UPDATE_CARD_POSITION', { board_id: this.$route.params.board_id, removed, insert })
           })
           container = new Dragable()
-          container.UpdateSchema = function () {}
           container.on(this.$refs.container, ({ removed, insert }) => {
             this.$store.dispatch('UPDATE_LIST_POSITION', { board_id: this.$route.params.board_id, removed, insert })
           })

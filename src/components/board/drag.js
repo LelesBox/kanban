@@ -54,34 +54,6 @@ on(document, 'mousemove', onMove)
 on(document, 'mouseup', stopMove)
 on(document, 'mouseleave', stopMove)
 
-export default function dragable (elms, cb, id) {
-  var index = 0
-  if (id !== undefined) {
-    index = id
-  } else {
-    index = idx++
-  }
-  if (elms.length === undefined) {
-    elms.setAttribute('drag-id', index)
-  } else {
-    for (var i = 0, l = elms.length; i < l; i++) {
-      elms[i].setAttribute('drag-id', index)
-    }
-  }
-  updateViews[index] = applyDrag(elms, index, cb)
-  return {
-    update: function () {
-      dragable(elms, cb, index)
-    },
-    OverrideUpdateDOM: function (update) {
-      updateViews[index] = applyDrag(elms, index, cb, update)
-    }
-  }
-}
-dragable.onmove = function (cb) {
-  onmove = cb
-}
-
 function Dragable () {
   this.updateDOMMethod = UpdateSchema()
   this.index = idx++
