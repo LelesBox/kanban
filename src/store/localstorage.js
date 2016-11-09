@@ -1,7 +1,7 @@
 var localStorage = window.localStorage
 var stateTree = localStorage.getItem('state')
 var localVersion = localStorage.getItem('vue-drag-version')
-var Version = '1'
+var Version = '2'
 if (stateTree && localVersion && localVersion === Version) {
   stateTree = JSON.parse(stateTree)
 } else {
