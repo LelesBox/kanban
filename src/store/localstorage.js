@@ -1,7 +1,7 @@
 var localStorage = window.localStorage
 var stateTree = localStorage.getItem('state')
 var localVersion = localStorage.getItem('vue-drag-version')
-var Version = '2'
+var Version = '4.1'
 if (stateTree && localVersion && localVersion === Version) {
   stateTree = JSON.parse(stateTree)
 } else {
@@ -11,7 +11,28 @@ if (stateTree && localVersion && localVersion === Version) {
     list: [{
       list_id: '0',
       list_name: '列表名',
-      cards: []
+      cards: [
+        {
+          card_id: '1',
+          text: 'item 1'
+        },
+        {
+          card_id: '2',
+          text: 'item 2'
+        },
+        {
+          card_id: '3',
+          text: 'item 3'
+        }
+      ]
+    },
+    {
+      list_id: '1',
+      list_name: '列表名2',
+      cards: [{
+        card_id: '4',
+        text: 'item 4'
+      }]
     }]
   }]
 }
